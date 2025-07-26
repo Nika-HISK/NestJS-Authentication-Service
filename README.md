@@ -1,10 +1,10 @@
-# 🔐 NestJS Authentication Service
+#  NestJS Authentication Service
 
 This is a simple and modular authentication service built with **NestJS**, **MySQL**, and **TypeORM**. It includes user registration and login with **JWT-based authentication**, along with input validation using **Validation Pipes** and **class-transformer**.
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 - **NestJS** – Progressive Node.js framework
 - **TypeORM** – ORM for MySQL
@@ -15,7 +15,7 @@ This is a simple and modular authentication service built with **NestJS**, **MyS
 
 ---
 
-## 📦 Features
+##  Features
 
 - User registration & login
 - JWT access token generation
@@ -25,7 +25,7 @@ This is a simple and modular authentication service built with **NestJS**, **MyS
 
 ---
 
-## 🛠️ Development Setup
+##  Development Setup
 
 ```bash
 # Clone the repo
