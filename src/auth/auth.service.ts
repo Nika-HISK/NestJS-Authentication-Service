@@ -10,12 +10,14 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { Role } from './guard/enum/role.enum';
+import { TokenBlacklistService } from 'src/token-blacklists/token-blacklists.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
@@ -45,6 +47,30 @@ export class AuthService {
 
     const payload = { sub: user.id, email: user.email, role: user.role };
     return this.generateToken(payload);
+  }
+
+  async logout(token: string, userId: number): Promise<{ message: string }> {
+    try {
+      const decodedToken = this.jwtService.decode(token) as any;
+
+      if (!decodedToken || !decodedToken.exp) {
+        throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
+      }
+
+      const expiresAt = new Date(decodedToken.exp * 1000);
+
+      await this.tokenBlacklistService.addToBlacklist(token, userId, expiresAt);
+
+      return { message: 'Successfully logged out' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Logout failed',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   private async generateToken(payload: any) {

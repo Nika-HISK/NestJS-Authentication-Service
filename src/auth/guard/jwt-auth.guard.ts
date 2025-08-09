@@ -11,6 +11,7 @@ import { UsersRepository } from 'src/users/repositories/users.repository';
 import { IS_PUBLIC_KEY } from './jwt-strategy';
 import { Role } from './enum/role.enum';
 import { ROLES_KEY } from './jwt-roles.guard';
+import { TokenBlacklistService } from 'src/token-blacklists/token-blacklists.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -18,6 +19,7 @@ export class AuthGuard implements CanActivate {
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -34,6 +36,12 @@ export class AuthGuard implements CanActivate {
 
     if (!token) {
       throw new UnauthorizedException('No token provided');
+    }
+
+    const isBlacklisted =
+      await this.tokenBlacklistService.isTokenBlacklisted(token);
+    if (isBlacklisted) {
+      throw new UnauthorizedException('Token has been invalidated');
     }
 
     try {
@@ -53,7 +61,9 @@ export class AuthGuard implements CanActivate {
 
       if (
         requiredRoles.length &&
-        !requiredRoles.some((role) => role.toLowerCase() === user.role.toLowerCase())
+        !requiredRoles.some(
+          (role) => role.toLowerCase() === user.role.toLowerCase(),
+        )
       ) {
         throw new UnauthorizedException('Insufficient permissions');
       }
@@ -69,15 +79,17 @@ export class AuthGuard implements CanActivate {
     if (!authHeader) {
       return undefined;
     }
-    
+
     const [type, token] = authHeader.split(' ');
     return type === 'Bearer' ? token : undefined;
   }
 
   private getRequiredRoles(context: ExecutionContext): Role[] {
-    return this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]) ?? [];
+    return (
+      this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]) ?? []
+    );
   }
 }

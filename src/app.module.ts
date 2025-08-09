@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import * as dotenv from 'dotenv';
 import { JwtModule } from '@nestjs/jwt';
+import { TokenBlacklist } from './token-blacklists/entities/token-blacklist.entity';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ dotenv.config();
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User],
+      entities: [User, TokenBlacklist],
       autoLoadEntities: true,
       synchronize: true,
     }),
