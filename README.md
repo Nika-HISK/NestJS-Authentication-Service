@@ -263,8 +263,8 @@ src/
 │   │   └── login-user.dto.ts
 │   ├── auth.controller.ts               # UPDATED: Logout endpoint
 │   ├── auth.module.ts                   # UPDATED: New dependencies
-│   ├── auth.service.ts                  # UPDATED: Logout method
-│   └── token-blacklist.service.ts       # NEW: Blacklist management
+│   ├── auth.service.ts                  
+│   └── token-blacklist.service.ts       
 ├── users/
 │   ├── entities/
 │   │   └── user.entity.ts
