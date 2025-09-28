@@ -261,8 +261,8 @@ src/
 │   │   └── jwt-strategy.ts
 │   ├── dto/
 │   │   └── login-user.dto.ts
-│   ├── auth.controller.ts               # UPDATED: Logout endpoint
-│   ├── auth.module.ts                   # UPDATED: New dependencies
+│   ├── auth.controller.ts               
+│   ├── auth.module.ts                  
 │   ├── auth.service.ts                  
 │   └── token-blacklist.service.ts       
 ├── users/
